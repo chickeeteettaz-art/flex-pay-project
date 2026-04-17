@@ -15,34 +15,59 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+import {
+    LayoutDashboardIcon,
+    ListIcon,
+    ChartBarIcon,
+    FolderIcon,
+    UsersIcon,
+    CameraIcon,
+    FileTextIcon,
+    Settings2Icon,
+    CircleHelpIcon,
+    SearchIcon,
+    DatabaseIcon,
+    FileChartColumnIcon,
+    FileIcon,
+    CommandIcon,
+    ChartNoAxesCombined
+} from "lucide-react"
+import Link from "next/link";
 
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "",
   },
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: (
         <LayoutDashboardIcon
         />
       ),
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "Payments",
+      url: "/dashboard/payments",
       icon: (
         <ListIcon
         />
       ),
     },
     {
-      title: "Analytics",
-      url: "#",
+      title: "About",
+      url: "/dashboard/about",
+      icon: (
+        <CircleHelpIcon
+        />
+      ),
+    },
+    {
+      title: "History",
+      url: "/dashboard/history",
       icon: (
         <ChartBarIcon
         />
@@ -183,11 +208,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="#" />}
+              render={<Link href="/dashboard" />}
             >
-              <CommandIcon className="size-5!" />
-              <span className="text-base font-semibold">Acme Inc.</span>
+              <ChartNoAxesCombined className="size-10" />
+              <span className="text-base font-semibold">Flex Pay</span>
+
             </SidebarMenuButton>
+              <span className="text-sm">International Payments</span>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
