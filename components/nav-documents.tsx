@@ -49,7 +49,7 @@ export function NavDocuments({
               >
                 <MoreHorizontalIcon
                 />
-                <span className="sr-only">More</span>
+
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-24"
@@ -79,7 +79,7 @@ export function NavDocuments({
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontalIcon className="text-sidebar-foreground/70" />
-            <span>More</span>
+
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
