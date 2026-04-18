@@ -47,7 +47,7 @@ export function SectionCards() {
              - R9 600.00
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge variant="outline" className={'px-4 py-1.5'}>
               <TrendingDownIcon
               />
 
@@ -71,7 +71,7 @@ export function SectionCards() {
             239
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge variant="outline" className={'px-4 py-1.5'}>
               <TrendingUpIcon
               />
             </Badge>
@@ -92,7 +92,7 @@ export function SectionCards() {
             56%
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
+            <Badge variant="outline" className={'px-4 py-1.5'}>
               <Activity
               />
               +56%
