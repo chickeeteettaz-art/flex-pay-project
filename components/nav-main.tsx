@@ -8,7 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { CirclePlusIcon, MailIcon } from "lucide-react"
+import {CirclePlusIcon, MailIcon, WalletIcon} from "lucide-react"
 import Link from "next/link"
 import {redirect} from "next/navigation";
 
@@ -46,7 +46,7 @@ export function NavMain({
               className="size-8 group-data-[collapsible=icon]:opacity-0"
               variant="outline"
             >
-              <MailIcon
+              <WalletIcon
               />
               <span className="sr-only">Inbox</span>
             </Button>

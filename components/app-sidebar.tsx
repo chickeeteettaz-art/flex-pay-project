@@ -27,9 +27,6 @@ import {
     CircleHelpIcon,
     SearchIcon,
     DatabaseIcon,
-    FileChartColumnIcon,
-    FileIcon,
-    CommandIcon,
     ChartNoAxesCombined
 } from "lucide-react"
 import Link from "next/link";
@@ -175,14 +172,14 @@ const data = {
   ],
   documents: [
     {
-      name: "Data Library",
+      name: "Documentation",
       url: "#",
       icon: (
         <DatabaseIcon
         />
       ),
     },
-    {
+    /*{
       name: "Reports",
       url: "#",
       icon: (
@@ -197,7 +194,7 @@ const data = {
         <FileIcon
         />
       ),
-    },
+    },*/
   ],
 }
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -210,7 +207,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/dashboard" />}
             >
-              <ChartNoAxesCombined className="size-10" />
+              <ChartNoAxesCombined className="size-10!" />
               <span className="text-base font-semibold">Flex Pay</span>
 
             </SidebarMenuButton>
