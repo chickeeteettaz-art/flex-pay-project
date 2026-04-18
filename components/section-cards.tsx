@@ -9,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {TrendingUpIcon, TrendingDownIcon, HandCoins, CreditCard} from "lucide-react"
+import {TrendingUpIcon, TrendingDownIcon, HandCoins, CreditCard, Activity} from "lucide-react"
+
 
 export function SectionCards() {
   return (
@@ -47,7 +48,7 @@ export function SectionCards() {
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendingUpIcon
+              <TrendingDownIcon
               />
 
             </Badge>
@@ -56,7 +57,7 @@ export function SectionCards() {
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Account payments
-            <TrendingUpIcon className="size-4" />
+            <TrendingDownIcon className="size-4" />
           </div>
           <div className="text-muted-foreground">
             Total amount of payments made
@@ -65,46 +66,45 @@ export function SectionCards() {
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>Total Transactions</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
+            239
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <TrendingUpIcon
               />
-              +12.5%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention{" "}
+            Increase in transactions
             <TrendingUpIcon className="size-4" />
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">Monthly payment rate increasing</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription>Account Performance</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
+            56%
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendingUpIcon
+              <Activity
               />
-              +4.5%
+              +56%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Steady performance increase{" "}
-            <TrendingUpIcon className="size-4" />
+            <Activity className="size-4" />
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">Account management growing</div>
         </CardFooter>
       </Card>
     </div>
