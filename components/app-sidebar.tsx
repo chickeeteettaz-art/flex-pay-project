@@ -19,8 +19,6 @@ import {
     LayoutDashboardIcon,
     ListIcon,
     ChartBarIcon,
-    FolderIcon,
-    UsersIcon,
     CameraIcon,
     FileTextIcon,
     Settings2Icon,
@@ -33,8 +31,8 @@ import Link from "next/link";
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Palse",
+    email: "pales@gmail.com",
     avatar: "",
   },
   navMain: [
@@ -71,21 +69,22 @@ const data = {
       ),
     },
     {
-      title: "Projects",
+      title: "Settings",
       url: "#",
       icon: (
-        <FolderIcon
-        />
+          <Settings2Icon
+          />
       ),
     },
     {
-      title: "Team",
+      title: "Search",
       url: "#",
       icon: (
-        <UsersIcon
-        />
+          <SearchIcon
+          />
       ),
     },
+
   ],
   navClouds: [
     {
@@ -145,35 +144,12 @@ const data = {
     },
   ],
   navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: (
-        <CircleHelpIcon
-        />
-      ),
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: (
-        <SearchIcon
-        />
-      ),
-    },
+
   ],
   documents: [
     {
       name: "Documentation",
-      url: "#",
+      url: "/dashboard/about",
       icon: (
         <DatabaseIcon
         />
