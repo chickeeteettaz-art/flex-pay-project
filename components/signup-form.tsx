@@ -1,26 +1,91 @@
+import {zodResolver} from "@hookform/resolvers/zod"
+import {Controller, useForm} from "react-hook-form";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
+  FieldDescription, FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {z} from "zod"
 
+
+
+// implementation of zod schema
+const userFormSchema = z.object({
+
+  fullName:z
+      .string()
+      .min(1, { message: 'Fullname is required' })
+      .max(50,{ message: '50 characters allowed' }),
+
+  idNumber:z.
+      string()
+      .min(1, { message: 'ID number is required' })
+      .max(13,{message:'13 characters allowed'})
+      .regex(/^\d+$/, { message: 'ID number must only contain digits' }),
+
+  email: z
+      .string()
+      .min(1, { message: 'Email is required' })
+      .max(100)
+      .email({ message: 'Please enter a valid Email address' }),
+
+  accountNumber: z
+      .string()
+      .min(1, { message: 'Account number is required' })
+      .length(16, { message: 'Account number must have exactly 16 digits' })
+      .regex(/^\d+$/, { message: 'Account number must only contain digits' }),
+
+  password: z
+      .string()
+      .min(10, { message: 'Password must have at least 10 characters' })
+      .regex(/[a-z]/, { message: 'Password must have at least one small letter' })
+      .regex(/[A-Z]/, { message: 'Password must have at least one big letter' })
+      .regex(/[0-9]/, { message: 'Password must have at least one number' })
+      .regex(/[^a-zA-Z0-9]/, { message: 'Password must have at least one special character' }),
+
+  confirmPassword: z
+      .string()
+      .min(10, { message: 'Confirm Password must have at least 10 characters' })
+      .regex(/[a-z]/, { message: 'Confirm Password must have at least one small letter' })
+      .regex(/[A-Z]/, { message: 'Confirm Password must have at least one big letter' })
+      .regex(/[0-9]/, { message: 'Confirm Password must have at least one number' })
+      .regex(/[^a-zA-Z0-9]/, { message: 'Confirm Password must have at least one special character' }),
+
+})
 
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+
+  const form = useForm<z.infer<typeof userFormSchema>>({
+    resolver: zodResolver(userFormSchema),
+    defaultValues:{
+      fullName:"",
+      idNumber: "",
+      accountNumber: "",
+      email:"",
+      password: "",
+      confirmPassword: ""
+    }
+  })
+
+  const handleSubmit = (values: z.infer<typeof userFormSchema>) => {
+    console.log(values);
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={form.handleSubmit(handleSubmit)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Create your account</h1>
@@ -28,19 +93,89 @@ export function SignupForm({
                   Enter your email below to create your account
                 </p>
               </div>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-                <FieldDescription>
-                  We&apos;ll use this to contact you. We will not share your
-                  email with anyone else.
-                </FieldDescription>
-              </Field>
+              <Controller
+                  name="fullName"
+                  control={form.control}
+                  render={({field,fieldState}) =>(
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="email">Fullname</FieldLabel>
+                        <Input
+                            {...field}
+                            area-invalid={(fieldState.invalid).toString()}
+                            id={field.name}
+                            type="text"
+                            placeholder="Enter full name"
+                            required
+                        />
+                        {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]}/>
+                        )}
+                      </Field>
+                  )}
+              />
+
+              <Controller
+                  name="idNumber"
+                  control={form.control}
+                  render={({field,fieldState}) =>(
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="idNumber">ID Number</FieldLabel>
+                        <Input
+                            {...field}
+                            area-invalid={(fieldState.invalid).toString()}
+                            id={field.name}
+                            type="number"
+                            placeholder="Enter ID Number"
+                            required
+                        />
+                        {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]}/>
+                        )}
+                      </Field>
+                  )}
+              />
+
+              <Controller
+                  name="email"
+                  control={form.control}
+                  render={({field,fieldState}) =>(
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="email">Email Address</FieldLabel>
+                        <Input
+                            {...field}
+                            area-invalid={(fieldState.invalid).toString()}
+                            id={field.name}
+                            type="text"
+                            placeholder="Enter Email Address"
+                            required
+                        />
+                        {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]}/>
+                        )}
+                      </Field>
+                  )}
+              />
+
+              <Controller
+                  name="accountNumber"
+                  control={form.control}
+                  render={({field,fieldState}) =>(
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="accountNumber">Account Number</FieldLabel>
+                        <Input
+                            {...field}
+                            area-invalid={(fieldState.invalid).toString()}
+                            id={field.name}
+                            type="text"
+                            placeholder="Enter Account Number"
+                            required
+                        />
+                        {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]}/>
+                        )}
+                      </Field>
+                  )}
+              />
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
