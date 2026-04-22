@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import {z} from "zod"
 import {toast} from "sonner"
 import {useState} from "react";
-import { Eye, EyeOff } from "lucide-react";
+import {ChartNoAxesCombined, Eye, EyeOff} from "lucide-react";
 
 
 
@@ -101,9 +101,10 @@ export function SignupForm({
           <form className="p-6 md:p-8" onSubmit={form.handleSubmit(handleSubmit)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create your account</h1>
+                  <ChartNoAxesCombined className="h-12 w-12 text-primary"/>
+                  <h1 className="text-2xl font-bold">Flex Pay Registration</h1>
                 <p className="text-sm text-balance text-muted-foreground">
-                  Enter your email below to create your account
+                  Enter your details below to create your account
                 </p>
               </div>
               <Controller
@@ -296,15 +297,11 @@ export function SignupForm({
                 </div>
 
 
-                <FieldDescription className="text-sm text-muted-foreground mb-5">
-                    Must be at least 8 characters long
-                </FieldDescription>
-
               <Field>
                 <Button type="submit">Create Account</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
+                OR
               </FieldSeparator>
 
               <FieldDescription className="text-center">
@@ -316,8 +313,8 @@ export function SignupForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        Flex pay online payment service. Powered by Swift
+
       </FieldDescription>
     </div>
   )

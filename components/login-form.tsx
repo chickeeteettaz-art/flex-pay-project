@@ -17,7 +17,7 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { z } from "zod"
-import {Eye, EyeOff} from "lucide-react";
+import {ChartNoAxesCombined, Eye, EyeOff} from "lucide-react";
 import {useState} from "react";
 
 interface UserSchemaTypes {
@@ -82,9 +82,10 @@ const onSubmit = (data: z.infer<typeof userSchema>) => {
 
 
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+                  <ChartNoAxesCombined className="h-12 w-12 text-primary"/>
+                  <h1 className="text-2xl font-bold">Flex Pay Login</h1>
                 <p className="text-balance text-muted-foreground">
-                  Login to your Flex Pay Account
+                  Please enter your details to login.
                 </p>
               </div>
 
@@ -169,7 +170,7 @@ const onSubmit = (data: z.infer<typeof userSchema>) => {
 
 
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
+                OR
               </FieldSeparator>
 
 
@@ -188,8 +189,7 @@ const onSubmit = (data: z.infer<typeof userSchema>) => {
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        Flex Pay online payment system. Powered by Swift.
       </FieldDescription>
     </div>
   )
