@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import {z} from "zod"
 import {toast} from "sonner"
 import {useState} from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 
 
@@ -75,6 +76,8 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
 
     const [showRequirements, setShowRequirements] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm<z.infer<typeof userFormSchema>>({
     resolver: zodResolver(userFormSchema),
     defaultValues:{
@@ -196,16 +199,29 @@ export function SignupForm({
                     render={({field,fieldState}) =>(
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor="password">Password</FieldLabel>
-                            <Input
-                                {...field}
-                                area-invalid={(fieldState.invalid).toString()}
-                                id={field.name}
-                                type="password"
-                                placeholder="Enter Passowrd"
-                                required
-                            />
+
+                            <div className="relative">
+                                <Input
+                                    {...field}
+                                    aria-invalid={fieldState.invalid}
+                                    id={field.name}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter Password"
+                                    required
+                                    className="pr-10"
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+
                             {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]}/>
+                                <FieldError errors={[fieldState.error]} />
                             )}
                         </Field>
                     )}
@@ -215,18 +231,31 @@ export function SignupForm({
                     name="confirmPassword"
                     control={form.control}
                     render={({field,fieldState}) =>(
-                        <Field data-invalid={fieldState.invalid} >
+                        <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
-                            <Input
-                                {...field}
-                                area-invalid={(fieldState.invalid).toString()}
-                                id={field.name}
-                                type="password"
-                                placeholder="Confirm Password"
-                                required
-                            />
+
+                            <div className="relative">
+                                <Input
+                                    {...field}
+                                    aria-invalid={fieldState.invalid}
+                                    id={field.name}
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder="Confirm Password"
+                                    required
+                                    className="pr-10"
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                >
+                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+
                             {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]}/>
+                                <FieldError errors={[fieldState.error]} />
                             )}
                         </Field>
                     )}

@@ -17,6 +17,8 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { z } from "zod"
+import {Eye, EyeOff} from "lucide-react";
+import {useState} from "react";
 
 interface UserSchemaTypes {
   email:string,
@@ -49,6 +51,8 @@ const userSchema = z.object({
 })
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+
+    const [showPassword,setShowPassword] = useState(false)
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -127,36 +131,39 @@ const onSubmit = (data: z.infer<typeof userSchema>) => {
                 )}
               />
 
-              <Controller
-                name="password"
-                control={form.control}
-                render={({field,fieldState})=>(
+                <Controller
+                    name="password"
+                    control={form.control}
+                    render={({field,fieldState}) =>(
+                        <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor="password">Password</FieldLabel>
 
-                  <Field data-invalid={fieldState.invalid}>
-                    <div className="flex items-center">
-                      <FieldLabel htmlFor="password">Password</FieldLabel>
-                      <a
-                        href="#"
-                        className="ml-auto text-sm underline-offset-2 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
-                    </div>
-                    <Input
-                      {...field}
-                      area-invalid = {(fieldState.invalid).toString()}
-                      id={field.name}
-                      type="password"
-                      placeholder={'Password'}
-                      required
-                    />
-                    {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]}/>
-                      )}
-                  </Field>
+                            <div className="relative">
+                                <Input
+                                    {...field}
+                                    aria-invalid={fieldState.invalid}
+                                    id={field.name}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter Password"
+                                    required
+                                    className="pr-10"
+                                />
 
-                )}
-              />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+
+                            {fieldState.invalid && (
+                                <FieldError errors={[fieldState.error]} />
+                            )}
+                        </Field>
+                    )}
+                />
 
                 <Button type="submit">Login</Button>
 
