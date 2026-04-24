@@ -1,5 +1,4 @@
 import { LoginForm } from "@/components/login-form"
-import { BugReportForm } from "@/components/sign"
 
 export default function LoginPage() {
   return (
