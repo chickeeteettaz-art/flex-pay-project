@@ -64,7 +64,7 @@ export default function Payment() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen ">
       <Card className="w-[420px] shadow-xl rounded-2xl">
         <CardContent className="p-6">
 
@@ -78,10 +78,10 @@ export default function Payment() {
             
             <div>
               <Label>Amount</Label>
-              <div className="flex items-center border rounded px-2">
+              <div className="flex items-center border rounded px-2 mt-1">
                 <DollarSign className="text-gray-500" size={18} />
                 <Input
-                  className="border-none focus-visible:ring-0"
+                  className="border-none focus-visible:ring-0 bg-transparent"
                   placeholder="1000"
                   {...register("amount")}
                 />
@@ -96,7 +96,7 @@ export default function Payment() {
            
             <div>
               <Label>Currency</Label>
-              <div className="flex items-center border rounded px-2">
+              <div className="flex items-center border rounded px-2 mt-1">
                 <Globe className="text-gray-500" size={18} />
                 <select
                   {...register("currency")}
@@ -119,11 +119,11 @@ export default function Payment() {
             
             <div>
               <Label>Payee Name</Label>
-              <div className="flex items-center border rounded px-2">
+              <div className="flex items-center border rounded px-2 mt-1">
                 <User className="text-gray-500" size={18} />
                 <Input
-                  className="border-none focus-visible:ring-0"
-                  placeholder="Tendani Murendi"
+                  className="border-none focus-visible:ring-0 bg-transparent"
+                  placeholder="Enter name"
                   {...register("payeeName")}
                 />
               </div>
@@ -137,10 +137,10 @@ export default function Payment() {
            
             <div>
               <Label>Account Number</Label>
-              <div className="flex items-center border rounded px-2">
+              <div className="flex items-center border rounded px-2 mt-1">
                 <CreditCard className="text-gray-500" size={18} />
                 <Input
-                  className="border-none focus-visible:ring-0"
+                  className="border-none focus-visible:ring-0 bg-transparent"
                   placeholder="16-digit account number"
                   {...register("accountNumber")}
                 />
@@ -155,10 +155,10 @@ export default function Payment() {
             
             <div>
               <Label>SWIFT Code</Label>
-              <div className="flex items-center border rounded px-2">
+              <div className="flex items-center border rounded px-2 mt-1">
                 <Landmark className="text-gray-500" size={18} />
                 <Input
-                  className="border-none focus-visible:ring-0"
+                  className="border-none focus-visible:ring-0 bg-transparent"
                   placeholder="ABCDZAJJ"
                   {...register("swiftCode")}
                 />
