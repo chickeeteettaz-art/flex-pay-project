@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const resetPasswordSchema = z.object({
     email: z
         .string()
-        .min(1, "Email is required")
+        .min(2, "Email is required")
         .email("Please enter a valid email address"),
 
     accountNumber: z
