@@ -9,14 +9,7 @@ const nextConfig: NextConfig = {
   },
 
   // Add security headers including a CSP
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: securityHeaders,
-      },
-    ];
-  },
+
 };
 
 export default nextConfig;
