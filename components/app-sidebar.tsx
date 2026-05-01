@@ -25,16 +25,15 @@ import {
     CircleHelpIcon,
     SearchIcon,
     DatabaseIcon,
-    ChartNoAxesCombined
+    ChartNoAxesCombined, FileChartColumnIcon
 } from "lucide-react"
 import Link from "next/link";
+import {useEffect, useState} from "react";
+import {supabase} from "@/lib/client";
+
 
 const data = {
-  user: {
-    name: "Palse",
-    email: "pales@gmail.com",
-    avatar: "",
-  },
+
   navMain: [
     {
       title: "Dashboard",
@@ -155,14 +154,14 @@ const data = {
         />
       ),
     },
-    /*{
-      name: "Reports",
-      url: "#",
+    {
+      name: "Account",
+      url: "/dashboard/account",
       icon: (
         <FileChartColumnIcon
         />
       ),
-    },
+    },/*
     {
       name: "Word Assistant",
       url: "#",
@@ -174,6 +173,40 @@ const data = {
   ],
 }
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
+    useEffect(() => {
+        async function getDashboardData() {
+            // 1. Get the authenticated user
+            const {data: {user}, error: authError} = await supabase.auth.getUser()
+
+            if (authError || !user) {
+                console.error("Auth error:", authError)
+                return
+            }
+
+            const userId = user.id
+
+            // 2. Run queries in parallel for better performance
+            const [accountRes] = await Promise.all([
+                // Get account details
+                supabase
+                    .from('account')
+                    .select('full_name,email')
+                    .eq('user_id', userId)
+                    .single(),
+            ])
+            setUsername(accountRes.data?.full_name);
+            setEmail(accountRes.data?.email)
+        }
+        getDashboardData()
+    }, [])
+
+    const user = {
+        name:username,
+        email: email,
+        avatar: ""
+    }
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -197,7 +230,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

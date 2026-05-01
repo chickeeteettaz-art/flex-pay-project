@@ -29,10 +29,11 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
+import {useEffect, useState} from "react";
 
 export const description = "An interactive area chart"
 
-const chartData = [
+let chartData = [
   { date: "2024-04-01", transaction: 222 },
   { date: "2024-04-02", transaction: 9 },
   { date: "2024-04-03", transaction: 167 },
@@ -67,6 +68,24 @@ const chartData = [
   { date: "2024-05-02", transaction: 293 },
 ]
 
+
+interface Payment {
+    created_at: string;
+    account_id: string;
+    amount: number;
+    currency: string;
+    swift_code: string;
+    status: string;
+    account_number: string;
+    date: string;
+    payee_name:string;
+    id:number;
+    account:{user_id:string}
+}
+interface Transaction {
+    date: string;
+    transaction: number;
+}
 const chartConfig = {
   payments: {
     label: "Payment",
@@ -79,18 +98,67 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function ChartAreaInteractive() {
-  const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("30d")
 
-  React.useEffect(() => {
-    if (isMobile) {
-      setTimeRange("7d")
-    }
-  }, [isMobile])
+    const [data, setData] = useState<Transaction[]>([])
+    const [loading, setLoading] = useState(true)
+    const isMobile = useIsMobile()
+    const [timeRange, setTimeRange] = React.useState("7d")
 
-  const filteredData = chartData.filter((item) => {
+    useEffect(() => {
+        async function getPayments() {
+            try {
+                const response = await fetch('/api/payments', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+
+                if (!response.ok) throw new Error('Failed to fetch payments')
+
+                const result = await response.json();
+
+                // CRITICAL FIX: Access result.data because your API wraps the array
+                // result = { success: true, message: "...", data: [...] }
+                if (result.success && Array.isArray(result.data)) {
+                    const formatted: Transaction[] = result.data.map((item: Payment) => ({
+                        // Use item.date if that's your field, or item.created_at
+                        date: item.date || item.created_at,
+                        transaction: Number(item.amount) // Ensure it's a number for the chart
+                    }));
+
+                    // Sort data by date (ascending) so the chart lines draw correctly left-to-right
+                    const sorted = formatted.sort((a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                    );
+
+                    setData(sorted);
+                } else {
+                    throw new Error(result.message || "Invalid data format received");
+                }
+            } catch (error: any) {
+                console.error("Fetch error:", error.message)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        getPayments()
+    }, [])
+
+    useEffect(() => {
+        if (isMobile) {
+            setTimeRange("7d")
+        }
+    }, [isMobile])
+
+    if (loading) return <div>Loading transaction data...</div>
+
+
+
+
+
+  const filteredData = data.filter((item) => {
     const date = new Date(item.date)
-    const referenceDate = new Date("2024-05-02")
+    const referenceDate = new Date("2026-04-20")
     let daysToSubtract = 90
     if (timeRange === "30d") {
       daysToSubtract = 30
@@ -122,7 +190,7 @@ export function ChartAreaInteractive() {
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex"
           >
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
+
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
@@ -139,12 +207,10 @@ export function ChartAreaInteractive() {
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder="Last 3 months" />
+              <SelectValue placeholder="Last 30 days" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="90d" className="rounded-lg">
-                Last 3 months
-              </SelectItem>
+
               <SelectItem value="30d" className="rounded-lg">
                 Last 30 days
               </SelectItem>
