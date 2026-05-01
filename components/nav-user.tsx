@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/sidebar"
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/client";
 
 export function NavUser({
   user,
@@ -33,6 +35,21 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error("Error during sign out:", error)
+      }
+    } finally {
+      // Navigate to login regardless to clear any client state
+      router.replace('/login')
+    }
+  }
+    
+    
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -95,10 +112,10 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem >
               <LogOutIcon
               />
-                <Link href={'/login'}>Log out</Link>
+                Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
