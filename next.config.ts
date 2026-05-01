@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // Add security headers including a CSP that restricts scripts
+  // Add security headers including a CSP
   async headers() {
     return [
       {
