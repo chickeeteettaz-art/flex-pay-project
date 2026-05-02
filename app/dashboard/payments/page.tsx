@@ -53,15 +53,49 @@ export default function Payment() {
     resolver: zodResolver(paymentSchema),
   });
 
-  
-  const onSubmit = (data: PaymentFormData) => {
-    console.log("Payment Data:", data);
 
-    
-    setTimeout(() => {
-      router.push("/dashboard/payments/success");
-    }, 800);
-  };
+
+    const onSubmit = async (data: PaymentFormData) => {
+        const res = await fetch(`/api/conversionCurrency?base=${data.currency.toString().trim()}&target=ZAR&amount=${data.amount}`, {
+            method: 'GET'
+        });
+        const conversion = await res.json()
+        console.log(conversion.convertedAmount)
+        try {
+
+            // 1. Send data to your API route
+            const response = await fetch('/api/payments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: conversion.convertedAmount,
+                    currency: data.currency,
+                    payeeName: data.payeeName,
+                    accountNumber: data.accountNumber,
+                    swiftCode: data.swiftCode,
+                    date: new Date().toISOString(),
+                }),
+            });
+
+            const result = await response.json();
+
+            // 2. Handle non-200 responses
+            if (!response.ok) {
+                console.error("Payment failed:", result.error);
+                throw new Error(result.error || 'Payment failed');
+            }
+
+            // 3. Success: Redirect to success page
+            router.push("/dashboard/payments/success");
+
+        } catch (error: any) {
+            // 4. Handle errors (Consider using a Toast component here)
+            console.error("Submission Error:", error.message);
+            alert(error.message || "An unexpected error occurred. Please try again.");
+        }
+    };
 
   return (
     <div className="flex justify-center items-center h-screen ">

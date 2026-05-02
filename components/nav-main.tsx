@@ -36,7 +36,7 @@ export function NavMain({
 
                           <CirclePlusIcon
                           />
-                          <span>Make Payment</span>
+                          <span>Make New Payment</span>
 
                   </SidebarMenuButton>
 

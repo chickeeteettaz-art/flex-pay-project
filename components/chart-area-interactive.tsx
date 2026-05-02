@@ -29,44 +29,30 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
+import {useEffect, useState} from "react";
 
 export const description = "An interactive area chart"
 
-const chartData = [
-  { date: "2024-04-01", transaction: 222 },
-  { date: "2024-04-02", transaction: 9 },
-  { date: "2024-04-03", transaction: 167 },
-  { date: "2024-04-04", transaction: 242 },
-  { date: "2024-04-05", transaction: 373 },
-  { date: "2024-04-06", transaction: 301 },
-  { date: "2024-04-07", transaction: 245 },
-  { date: "2024-04-08", transaction: 409 },
-  { date: "2024-04-09", transaction: 59 },
-  { date: "2024-04-10", transaction: 261 },
-  { date: "2024-04-11", transaction: 327 },
-  { date: "2024-04-12", transaction: 292 },
-  { date: "2024-04-13", transaction: 342 },
-  { date: "2024-04-14", transaction: 137 },
-  { date: "2024-04-15", transaction: 120 },
-  { date: "2024-04-16", transaction: 138 },
-  { date: "2024-04-17", transaction: 446 },
-  { date: "2024-04-18", transaction: 364 },
-  { date: "2024-04-19", transaction: 243 },
-  { date: "2024-04-20", transaction: 89 },
-  { date: "2024-04-21", transaction: 137 },
-  { date: "2024-04-22", transaction: 224 },
-  { date: "2024-04-23", transaction: 138 },
-  { date: "2024-04-24", transaction: 387 },
-  { date: "2024-04-25", transaction: 215 },
-  { date: "2024-04-26", transaction: 75 },
-  { date: "2024-04-27", transaction: 383 },
-  { date: "2024-04-28", transaction: 122 },
-  { date: "2024-04-29", transaction: 315 },
-  { date: "2024-04-30", transaction: 454 },
-  { date: "2024-05-01", transaction: 165 },
-  { date: "2024-05-02", transaction: 293 },
-]
 
+
+
+interface Payment {
+    created_at: string;
+    account_id: string;
+    amount: number;
+    currency: string;
+    swift_code: string;
+    status: string;
+    account_number: string;
+    date: string;
+    payee_name:string;
+    id:number;
+    account:{user_id:string}
+}
+interface Transaction {
+    date: string;
+    transaction: number;
+}
 const chartConfig = {
   payments: {
     label: "Payment",
@@ -79,18 +65,67 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function ChartAreaInteractive() {
-  const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("30d")
 
-  React.useEffect(() => {
-    if (isMobile) {
-      setTimeRange("7d")
-    }
-  }, [isMobile])
+    const [data, setData] = useState<Transaction[]>([])
+    const [loading, setLoading] = useState(true)
+    const isMobile = useIsMobile()
+    const [timeRange, setTimeRange] = React.useState("7d")
 
-  const filteredData = chartData.filter((item) => {
+    useEffect(() => {
+        async function getPayments() {
+            try {
+                const response = await fetch('/api/payments', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+
+                if (!response.ok) throw new Error('Failed to fetch payments')
+
+                const result = await response.json();
+
+                // CRITICAL FIX: Access result.data because your API wraps the array
+                // result = { success: true, message: "...", data: [...] }
+                if (result.success && Array.isArray(result.data)) {
+                    const formatted: Transaction[] = result.data.map((item: Payment) => ({
+                        // Use item.date if that's your field, or item.created_at
+                        date: item.date || item.created_at,
+                        transaction: Number(item.amount) // Ensure it's a number for the chart
+                    }));
+
+                    // Sort data by date (ascending) so the chart lines draw correctly left-to-right
+                    const sorted = formatted.sort((a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                    );
+
+                    setData(sorted);
+                } else {
+                    throw new Error(result.message || "Invalid data format received");
+                }
+            } catch (error: any) {
+                console.error("Fetch error:", error.message)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        getPayments()
+    }, [])
+
+    useEffect(() => {
+        if (isMobile) {
+            setTimeRange("7d")
+        }
+    }, [isMobile])
+
+    if (loading) return <div>Loading transaction data...</div>
+
+
+
+
+
+  const filteredData = data.filter((item) => {
     const date = new Date(item.date)
-    const referenceDate = new Date("2024-05-02")
+    const referenceDate = new Date("2026-04-20")
     let daysToSubtract = 90
     if (timeRange === "30d") {
       daysToSubtract = 30
@@ -122,7 +157,7 @@ export function ChartAreaInteractive() {
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex"
           >
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
+
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
@@ -139,12 +174,10 @@ export function ChartAreaInteractive() {
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder="Last 3 months" />
+              <SelectValue placeholder="Last 30 days" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="90d" className="rounded-lg">
-                Last 3 months
-              </SelectItem>
+
               <SelectItem value="30d" className="rounded-lg">
                 Last 30 days
               </SelectItem>

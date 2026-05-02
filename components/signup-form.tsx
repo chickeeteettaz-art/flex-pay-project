@@ -16,6 +16,7 @@ import {z} from "zod"
 import {toast} from "sonner"
 import {useState} from "react";
 import {ChartNoAxesCombined, Eye, EyeOff} from "lucide-react";
+import {useRouter} from "next/navigation";
 
 
 
@@ -78,6 +79,10 @@ export function SignupForm({
     const [showRequirements, setShowRequirements] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
+    const router = useRouter();
+
   const form = useForm<z.infer<typeof userFormSchema>>({
     resolver: zodResolver(userFormSchema),
     defaultValues:{
@@ -91,9 +96,57 @@ export function SignupForm({
     mode:"onChange"
   })
 
-  const handleSubmit = (values: z.infer<typeof userFormSchema>) => {
-    console.log(values);
-  }
+    const handleSubmit = async (values: z.infer<typeof userFormSchema>) => {
+
+        setIsLoading(true);
+        setServerError(null);
+        try {
+            const response = await fetch("/api/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: values.email,
+                    password: values.password,
+                    fullName: values.fullName,
+                    idNumber: values.idNumber,
+                    accountNumber: values.accountNumber,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // API returned an error (400, 500, etc.)
+                toast.error("Signup failed", {
+                    description: result.message || "Something went wrong",
+                });
+                return;
+            }
+
+            // Success
+            toast.success("Account created successfully", {
+                description: "Please check your email to verify your account",
+            });
+
+            console.log("User created:", result.data);
+
+            form.reset();
+            router.push("/login");
+
+        } catch (error: any) {
+            setServerError(error.message);
+            // Network / unexpected error
+            toast.error("Something went wrong", {
+                description: error.message || "Please try again later",
+            });
+
+            console.error(error);
+        }finally {
+        setIsLoading(false);
+    }
+    };
   return (
     <div className={cn("flex flex-col gap-4", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -298,7 +351,16 @@ export function SignupForm({
 
 
               <Field>
-                <Button type="submit">Create Account</Button>
+                  {serverError && (
+                      <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md">
+                          {serverError}
+                      </div>
+                  )}
+
+                  {/* 2. Update the Submit Button */}
+                  <Button type="submit" disabled={isLoading}>
+                      {isLoading ? "Creating Account..." : "Create Account"}
+                  </Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 OR

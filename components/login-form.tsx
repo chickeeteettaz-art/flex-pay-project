@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { z } from "zod"
 import {ChartNoAxesCombined, Eye, EyeOff} from "lucide-react";
 import {useState} from "react";
+import {useRouter} from "next/navigation";
 
 interface UserSchemaTypes {
     email:string,
@@ -52,6 +53,7 @@ const userSchema = z.object({
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 
+
     const [showPassword,setShowPassword] = useState(false)
     const form = useForm<z.infer<typeof userSchema>>({
         resolver: zodResolver(userSchema),
@@ -64,12 +66,45 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     })
 
 
-    const onSubmit = (data: z.infer<typeof userSchema>) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
+    const router = useRouter();
 
-        console.log(data)
-        form.reset()
+    const onSubmit = async (values: z.infer<typeof userSchema>) => {
+        setIsLoading(true);
+        setServerError(null);
 
-    }
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: values.email,
+                    password: values.password,
+                    accountNumber: values.accountNumber
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // Handle specific auth errors from Supabase
+                throw new Error(result.message || "Invalid email or password");
+            }
+
+            // Success! Clear form and redirect
+            form.reset();
+            router.push("/dashboard");
+            router.refresh(); // Crucial to update Server Components with the new session
+
+        } catch (err: any) {
+            setServerError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
 
@@ -166,7 +201,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                 )}
                             />
 
-                            <Button type="submit">Login</Button>
+                            {serverError && (
+                                <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md">
+                                    {serverError}
+                                </div>
+                            )}
+
+                            {/* 2. Update the Submit Button */}
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? "Logging in..." : "Login"}
+                            </Button>
 
 
                             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
@@ -177,11 +221,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             <FieldDescription className="text-center">
                                 Don&apos;t have an account? <a href="/signup">Sign up</a>
                             </FieldDescription>
+                            <FieldDescription className="text-center">
+                                Login As Admin<a href="/admin-login">Admin Login</a>
+                            </FieldDescription>
                         </FieldGroup>
                     </form>
                     <div className="relative hidden bg-muted md:block">
                         <img
-                            src="/login_back.jpg"
+                            src="/login-logo.jpeg"
                             alt="Image"
                             className="absolute inset-0 h-full w-full object-cover m-5"
                         />

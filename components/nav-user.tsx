@@ -21,6 +21,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 export function NavUser({
   user,
@@ -32,6 +36,21 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error("Error during sign out:", error)
+      }
+    } finally {
+      // Navigate to login regardless to clear any client state
+      router.replace('/login')
+    }
+  }
+    
+    
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -42,7 +61,7 @@ export function NavUser({
             }
           >
             <Avatar className="size-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={""} alt={user.name} />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -64,7 +83,7 @@ export function NavUser({
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">{user.email.substring(0,1).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
@@ -80,7 +99,7 @@ export function NavUser({
               <DropdownMenuItem>
                 <CircleUserRoundIcon
                 />
-                Account
+                  <Link href={'/'}>Account</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon
@@ -94,10 +113,10 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem >
               <LogOutIcon
               />
-              Log out
+               <Link href={'/login'}>Log Out</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
