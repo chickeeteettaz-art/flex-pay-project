@@ -23,7 +23,8 @@ import {
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/client";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 export function NavUser({
   user,
@@ -60,7 +61,7 @@ export function NavUser({
             }
           >
             <Avatar className="size-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={""} alt={user.name} />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -82,7 +83,7 @@ export function NavUser({
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">{user.email.substring(0,1).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
@@ -98,7 +99,7 @@ export function NavUser({
               <DropdownMenuItem>
                 <CircleUserRoundIcon
                 />
-                  <Link href={'/dashboard/account'}>Account</Link>
+                  <Link href={'/'}>Account</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon
@@ -115,7 +116,7 @@ export function NavUser({
             <DropdownMenuItem >
               <LogOutIcon
               />
-                Log out
+               <Link href={'/login'}>Log Out</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

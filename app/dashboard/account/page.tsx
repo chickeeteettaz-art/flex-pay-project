@@ -1,175 +1,335 @@
-import React from 'react';
-import {
-    User,
-    CreditCard,
-    TrendingUp,
-    Calendar,
-    Edit2,
-    ArrowUpRight
-} from 'lucide-react';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import {useEffect, useState} from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { User, CreditCard, Wallet, IdCard } from "lucide-react";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
-const AccountManagement = () => {
-    // Mock data - replace with your real data (useState, useQuery, etc.)
-    const account = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        accountNumber: "ACC-98765432",
-        balance: 12450.75,
-        totalTransactions: 47,
-        thisMonthTransactions: 8,
-        joined: "March 2024",
-        avatar:""
+export default function AccountPage() {
+    const [isEditing, setIsEditing] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showDeposit, setShowDeposit] = useState(false);
+
+    const [account, setAccount] = useState({
+        fullName: "Palesa Sekgobela",
+        accountNumber: "1234567890123456",
+        idNumber: "9901011234087",
+        balance: 12500.75,
+    });
+
+    const [passwordData, setPasswordData] = useState({
+        current: "",
+        new: "",
+    });
+
+    const [depositAmount, setDepositAmount] = useState("");
+
+
+
+    const getInitials = (name: string) => {
+        return name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
+    };
+
+    const handleSaveProfile = () => {
+        console.log("Updated Profile:", account);
+        setIsEditing(false);
+    };
+
+    const handleChangePassword = () => {
+        console.log("Password Changed:", passwordData);
+        setShowPassword(false);
+        setPasswordData({ current: "", new: "" });
     };
 
 
 
+    const [data, setData] = useState({
+        balance: 0,
+        paymentCount: 0,
+        totalPaymentsValue: 0,
+        accountNumber: "",
+        loading: true,
+        fullName: "",
+        idNumber:"",
+        id:''
+    })
+
+    useEffect(() => {
+        async function getDashboardData() {
+            // 1. Get the authenticated user
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+            if (authError || !user) {
+                console.error("Auth error:", authError)
+                return
+            }
+
+            const userId = user.id
+
+            // 2. Run queries in parallel for better performance
+            const [accountRes] = await Promise.all([
+                // Get account details
+                supabase
+                    .from('account')
+                    .select('balance, account_number,id,full_name,id_number')
+                    .eq('user_id', userId)
+                    .single(),
+
+
+            ])
+            const {data, error} = await supabase
+                .from('payment')
+                .select('amount')
+                .eq('account_id', accountRes.data?.id)
+
+            const totalSum = data?.reduce((acc, curr) => acc + curr.amount, 0) ?? 0
+
+            setData({
+                balance: accountRes.data?.balance ?? 0,
+                accountNumber: accountRes.data?.account_number ?? "N/A",
+                totalPaymentsValue: totalSum,
+                paymentCount: data?.length ?? 0,
+                loading: false,
+                fullName:accountRes.data?.full_name ?? "N/A",
+                idNumber:accountRes.data?.id_number ?? "N/A",
+                id:accountRes.data?.id ?? "N/A"
+            })
+        }
+
+        getDashboardData()
+    }, [])
+
+    const handleDeposit = async () => {
+        const depositAmounted = parseFloat(depositAmount);
+        const amount = depositAmounted + data.balance;
+
+
+        if (!isNaN(amount) && amount > 0) {
+            const { data: updated, error: updateError } = await supabase
+                .from('payment')
+                .update({ amount: depositAmounted })
+                .eq('id', data.id)
+                .select()
+                .single()
+
+            if (updateError) throw updateError
+
+            alert("Deposit successful")
+        }
+
+
+        setDepositAmount("");
+        setShowDeposit(false);
+    };
+
     return (
-        <div className="min-h-screen bg-background p-6">
-            <div className="max-w-6xl mx-auto space-y-8">
-                {/* Page Header */}
+        <div className="p-6 bg-gray-100 min-h-screen">
+
+
+            <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                    {getInitials(data.fullName)}
+                </div>
+
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight">Account Management</h1>
-                    <p className="text-muted-foreground mt-2">
-                        Manage your profile and monitor your account performance
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    {/* Profile Sidebar */}
-                    <div className="lg:col-span-4">
-                        <Card>
-                            <CardHeader className="text-center pb-2">
-                                <Avatar className="w-24 h-24 mx-auto border-4 border-background shadow">
-                                    <AvatarImage src={account.avatar} />
-                                    <AvatarFallback className="text-4xl bg-primary/10 text-primary">
-                                        {account.name.split(' ').map(n => n[0]).join('')}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <CardTitle className="mt-4 text-2xl">{account.name}</CardTitle>
-                                <CardDescription>{account.email}</CardDescription>
-                                <Badge variant="secondary" className="mt-2">
-                                    {account.accountNumber}
-                                </Badge>
-                            </CardHeader>
-
-                            <CardContent>
-                                <Button className="w-full" size="lg">
-                                    <Edit2 className="mr-2 h-4 w-4" />
-                                    Edit Profile
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Stats Cards */}
-                    <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
-                        {/* Balance Card */}
-                        <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <CreditCard className="h-5 w-5 text-primary" />
-                                    Account Balance
-                                </CardTitle>
-                                <Badge variant="outline" className="text-emerald-600 border-emerald-600">
-                                    Available
-                                </Badge>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-5xl font-bold tracking-tighter text-foreground">
-                                    R{account.balance.toLocaleString('en-ZA')}
-                                </p>
-                                <p className="text-sm text-muted-foreground mt-1">South African Rand (ZAR)</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Total Transactions */}
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <TrendingUp className="h-5 w-5" />
-                                    Total Transactions
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-5xl font-bold tracking-tighter">{account.totalTransactions}</p>
-                                <p className="text-sm text-muted-foreground">All time</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* This Month */}
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Calendar className="h-5 w-5" />
-                                    This Month
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-baseline gap-2">
-                                    <p className="text-5xl font-bold tracking-tighter">{account.thisMonthTransactions}</p>
-                                    <span className="text-muted-foreground">transactions</span>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Member Since */}
-                        <Card>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-lg">Member Since</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-4xl font-semibold tracking-tight">{account.joined}</p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
-
-                {/* Quick Actions / More Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-5">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Recent Activity</CardTitle>
-                            <CardDescription>Your latest transactions will appear here.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-center py-12 text-muted-foreground">
-                                No recent transactions to show yet.
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Account Settings</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <Button variant="ghost" className="w-full justify-between h-12">
-                                Security & Password
-                                <ArrowUpRight className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" className="w-full justify-between h-12">
-                                Notification Preferences
-                                <ArrowUpRight className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" className="w-full justify-between h-12">
-                                Linked Bank Accounts
-                                <ArrowUpRight className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" className="w-full justify-between h-12 text-destructive hover:text-destructive">
-                                Close Account
-                                <ArrowUpRight className="h-4 w-4" />
-                            </Button>
-                        </CardContent>
-                    </Card>
+                    <p className="font-semibold text-lg">{data.fullName}</p>
+                    <p className="text-sm text-gray-500">Account Holder</p>
                 </div>
             </div>
+
+            <h1 className="text-2xl font-bold mb-6">
+                Account Management
+            </h1>
+
+
+            <Card className="max-w-lg shadow-xl rounded-2xl">
+                <CardContent className="p-6 space-y-4">
+
+
+                    <div className="flex items-center gap-3">
+                        <User className="text-gray-500" />
+                        <div className="w-full">
+                            <p className="text-sm text-gray-500">Full Name</p>
+
+                            {isEditing ? (
+                                <Input
+                                    value={data.fullName}
+                                    onChange={(e) =>
+                                        setAccount({ ...account, fullName: e.target.value })
+                                    }
+                                />
+                            ) : (
+                                <p className="font-semibold">{data.fullName}</p>
+                            )}
+                        </div>
+                    </div>
+
+
+                    <div className="flex items-center gap-3">
+                        <CreditCard className="text-gray-500" />
+                        <div>
+                            <p className="text-sm text-gray-500">Account Number</p>
+                            <p className="font-semibold">
+                                **** **** **** {data.accountNumber.toString().slice(-4)}
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div className="flex items-center gap-3">
+                        <IdCard className="text-gray-500" />
+                        <div>
+                            <p className="text-sm text-gray-500">ID Number</p>
+                            <p className="font-semibold">
+                                **** **** {data.idNumber.slice(-4)}
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div className="flex items-center gap-3">
+                        <Wallet className="text-green-600" />
+                        <div>
+                            <p className="text-sm text-gray-500">Balance</p>
+                            <p className="text-xl font-bold text-green-600">
+                                R {data.balance.toFixed(2)}
+                            </p>
+                        </div>
+                    </div>
+
+
+                    {isEditing ? (
+                        <div className="flex gap-2">
+                            <Button onClick={handleSaveProfile} className="w-full">
+                                Save Changes
+                            </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsEditing(false)}
+                                className="w-full"
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                    ) : (
+                        <Button
+                            className="w-full mt-4"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            Update Account Details
+                        </Button>
+                    )}
+
+                </CardContent>
+            </Card>
+
+
+            <Card className="mt-6 max-w-lg shadow-lg rounded-2xl">
+                <CardContent className="p-6 space-y-4">
+
+                    <h3 className="font-semibold text-lg">Change Password</h3>
+
+                    {showPassword ? (
+                        <>
+                            <Input
+                                type="password"
+                                placeholder="Current Password"
+                                value={passwordData.current}
+                                onChange={(e) =>
+                                    setPasswordData({
+                                        ...passwordData,
+                                        current: e.target.value,
+                                    })
+                                }
+                            />
+
+                            <Input
+                                type="password"
+                                placeholder="New Password"
+                                value={passwordData.new}
+                                onChange={(e) =>
+                                    setPasswordData({
+                                        ...passwordData,
+                                        new: e.target.value,
+                                    })
+                                }
+                            />
+
+                            <div className="flex gap-2">
+                                <Button onClick={handleChangePassword} className="w-full">
+                                    Save Password
+                                </Button>
+
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setShowPassword(false)}
+                                    className="w-full"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <Button
+                            onClick={() => setShowPassword(true)}
+                            className="w-full"
+                        >
+                            Change Password
+                        </Button>
+                    )}
+
+                </CardContent>
+            </Card>
+
+
+            <Card className="mt-6 max-w-lg shadow-lg rounded-2xl">
+                <CardContent className="p-6 space-y-4">
+
+                    <h3 className="font-semibold text-lg">
+                        Deposit Funds
+                    </h3>
+
+                    {showDeposit ? (
+                        <>
+                            <Input
+                                type="number"
+                                placeholder="Enter amount"
+                                value={depositAmount}
+                                onChange={(e) => setDepositAmount(e.target.value)}
+                            />
+
+                            <div className="flex gap-2">
+                                <Button onClick={handleDeposit} className="w-full">
+                                    Confirm Deposit
+                                </Button>
+
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setShowDeposit(false)}
+                                    className="w-full"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <Button
+                            onClick={() => setShowDeposit(true)}
+                            className="w-full"
+                        >
+                            Deposit
+                        </Button>
+                    )}
+
+                </CardContent>
+            </Card>
         </div>
     );
-};
-
-export default AccountManagement;
+}

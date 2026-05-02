@@ -3,7 +3,8 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {useEffect, useState} from "react";
-import {supabase} from "@/lib/client";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 
 

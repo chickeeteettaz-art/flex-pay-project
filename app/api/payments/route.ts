@@ -1,10 +1,13 @@
-import { supabase } from '@/lib/client'
+import { createClient } from '@/lib/server'
 import { NextResponse } from 'next/server'
+
+
 
 export async function POST(request: Request) {
 
 
     try {
+        const supabase = await  createClient()
         const body = await request.json()
         const amount = parseFloat(body.amount)
 
@@ -68,9 +71,10 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
     try {
+        const supabase = await  createClient()
         // Verify user
         const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        if (authError || !user) return NextResponse.json({ error: `Unauthorized ${user}` }, { status: 401 })
 
         // Use a join to fetch payments belonging to the user's account
         const { data, error } = await supabase
@@ -92,6 +96,7 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
     try {
+        const supabase = await  createClient()
         const body = await request.json()
         const { id, status } = body || {}
         console.log("BODY:", body.id, body.status)
@@ -106,21 +111,7 @@ export async function PUT(request: Request) {
             return NextResponse.json({ error: 'Invalid status value' }, { status: 400 })
         }
 
-        // Verify user
-        /*const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        // Ensure the payment belongs to the current user via join to account
-        const { data: paymentRow, error: fetchError } = await supabase
-            .from('payment')
-            .select('id, status, account!inner(user_id)')
-            .eq('id', id)
-            .eq('account.user_id', user.id)
-            .single()
-
-        if (fetchError || !paymentRow) {
-            return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
-        }*/
 
         // Update status
         const { data: updated, error: updateError } = await supabase

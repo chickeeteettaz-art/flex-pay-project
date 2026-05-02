@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/card"
 import {TrendingUpIcon, TrendingDownIcon, HandCoins, CreditCard, Activity} from "lucide-react"
 import { useEffect, useState } from "react"
-import { supabase } from '@/lib/client'
-import {router} from "next/client";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 
 export function SectionCards() {

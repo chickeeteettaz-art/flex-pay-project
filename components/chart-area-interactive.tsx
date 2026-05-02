@@ -33,40 +33,7 @@ import {useEffect, useState} from "react";
 
 export const description = "An interactive area chart"
 
-let chartData = [
-  { date: "2024-04-01", transaction: 222 },
-  { date: "2024-04-02", transaction: 9 },
-  { date: "2024-04-03", transaction: 167 },
-  { date: "2024-04-04", transaction: 242 },
-  { date: "2024-04-05", transaction: 373 },
-  { date: "2024-04-06", transaction: 301 },
-  { date: "2024-04-07", transaction: 245 },
-  { date: "2024-04-08", transaction: 409 },
-  { date: "2024-04-09", transaction: 59 },
-  { date: "2024-04-10", transaction: 261 },
-  { date: "2024-04-11", transaction: 327 },
-  { date: "2024-04-12", transaction: 292 },
-  { date: "2024-04-13", transaction: 342 },
-  { date: "2024-04-14", transaction: 137 },
-  { date: "2024-04-15", transaction: 120 },
-  { date: "2024-04-16", transaction: 138 },
-  { date: "2024-04-17", transaction: 446 },
-  { date: "2024-04-18", transaction: 364 },
-  { date: "2024-04-19", transaction: 243 },
-  { date: "2024-04-20", transaction: 89 },
-  { date: "2024-04-21", transaction: 137 },
-  { date: "2024-04-22", transaction: 224 },
-  { date: "2024-04-23", transaction: 138 },
-  { date: "2024-04-24", transaction: 387 },
-  { date: "2024-04-25", transaction: 215 },
-  { date: "2024-04-26", transaction: 75 },
-  { date: "2024-04-27", transaction: 383 },
-  { date: "2024-04-28", transaction: 122 },
-  { date: "2024-04-29", transaction: 315 },
-  { date: "2024-04-30", transaction: 454 },
-  { date: "2024-05-01", transaction: 165 },
-  { date: "2024-05-02", transaction: 293 },
-]
+
 
 
 interface Payment {

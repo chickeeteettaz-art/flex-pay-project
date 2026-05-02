@@ -29,7 +29,8 @@ import {
 } from "lucide-react"
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import {supabase} from "@/lib/client";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 import {NavAdmin} from "@/components/nav-admin";
 
 
@@ -116,27 +117,13 @@ const data = {
 
     ],
     documents: [
-        {
-            name: "Documentation",
-            url: "/dashboard/about",
-            icon: (
-                <DatabaseIcon
-                />
-            ),
-        },
-        {
-            name: "Account",
-            url: "/dashboard/account",
-            icon: (
-                <FileChartColumnIcon
-                />
-            ),
-        },
+
     ],
 }
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
+    const [username, setUsername] = useState<any>("")
+    const [email, setEmail] = useState<any>("")
+    const [currentUser,setUser] = useState<any>()
     useEffect(() => {
         async function getDashboardData() {
             // 1. Get the authenticated user
@@ -149,17 +136,10 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
 
             const userId = user.id
 
-            // 2. Run queries in parallel for better performance
-            const [accountRes] = await Promise.all([
-                // Get account details
-                supabase
-                    .from('account')
-                    .select('full_name,email')
-                    .eq('user_id', userId)
-                    .single(),
-            ])
-            setUsername(accountRes.data?.full_name);
-            setEmail(accountRes.data?.email)
+
+
+            setUsername(user.email);
+            setEmail(user.email)
         }
         getDashboardData()
     }, [])

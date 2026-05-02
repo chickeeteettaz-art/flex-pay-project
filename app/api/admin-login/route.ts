@@ -1,8 +1,9 @@
 "use server"
-import { supabase } from "@/lib/client";
+import { createClient } from "@/lib/server";
 
 export async function POST(req: Request) {
     try {
+        const supabase = await createClient();
         const { email, password,} = await req.json();
 
         // 1. Authenticate with Supabase

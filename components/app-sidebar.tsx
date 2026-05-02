@@ -29,7 +29,8 @@ import {
 } from "lucide-react"
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import {supabase} from "@/lib/client";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 
 const data = {
@@ -67,7 +68,7 @@ const data = {
         />
       ),
     },
-    {
+    /*{
       title: "Settings",
       url: "#",
       icon: (
@@ -82,7 +83,7 @@ const data = {
           <SearchIcon
           />
       ),
-    },
+    },*/
 
   ],
   navClouds: [

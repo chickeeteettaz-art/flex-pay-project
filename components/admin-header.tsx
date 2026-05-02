@@ -3,13 +3,13 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {useEffect, useState} from "react";
-import {supabase} from "@/lib/client";
-
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 
 
 export function AdminHeader() {
-    const [username, setUsername] = useState("")
+    const [username, setUsername] = useState<any>("")
     useEffect(() => {
         async function getDashboardData() {
             // 1. Get the authenticated user
@@ -20,18 +20,9 @@ export function AdminHeader() {
                 return
             }
 
-            const userId = user.id
 
-            // 2. Run queries in parallel for better performance
-            const [accountRes] = await Promise.all([
-                // Get account details
-                supabase
-                    .from('account')
-                    .select('balance, account_number,full_name')
-                    .eq('user_id', userId)
-                    .single(),
-            ])
-            setUsername(accountRes.data?.full_name);
+            setUsername(user?.email);
+            console.log(user?.email)
         }
         getDashboardData()
     }, [])

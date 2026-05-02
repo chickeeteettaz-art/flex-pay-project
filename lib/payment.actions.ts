@@ -1,4 +1,5 @@
-import {supabase} from "@/lib/client";
+import {createClient} from "@/lib/client";
+const supabase = createClient();
 
 export const getPayment = async (paymentId:string) => {
 
