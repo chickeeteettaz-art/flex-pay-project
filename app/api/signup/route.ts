@@ -36,7 +36,7 @@ export async function POST(req: Request) {
                     full_name: fullName,
                     id_number: idNumber,
                     account_number: accountNumber,
-                    balance: 0.0,
+                    balance: 1000.0,
                 },
             ])
             .select();
