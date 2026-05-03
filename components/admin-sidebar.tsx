@@ -156,7 +156,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             className="data-[slot=sidebar-menu-button]:p-1.5!"
-                            render={<Link href="/dashboard" />}
+                            render={<Link href="/admin-dashboard" />}
                         >
                             <ChartNoAxesCombined className="size-10!" />
                             <span className="text-base font-semibold">Flex Pay</span>

@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -55,6 +55,12 @@ export default function LoginPage() {
 
 
     const onSubmit = async (data: z.infer<typeof userSchema>) => {
+
+        const email = data.email;
+        if (!email.includes("03751@flex.co.za")) {
+            alert("You are not authorized to login");
+            redirect("/login");
+        }
         try {
             const response = await fetch("/api/admin-login", {
                 method: "POST",
