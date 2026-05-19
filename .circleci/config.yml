@@ -34,6 +34,11 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
+      - run:
+          name: Substitute environment variables in sonar-project.properties
+          command: |
+            sed -i "s|\${SONAR_PROJECT_KEY}|${SONAR_PROJECT_KEY}|g" sonar-project.properties
+            sed -i "s|\${SONAR_ORG_KEY}|${SONAR_ORG_KEY}|g" sonar-project.properties
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
