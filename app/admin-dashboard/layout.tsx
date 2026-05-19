@@ -3,6 +3,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 
+export const dynamic = 'force-dynamic';
+
 // Make this the root layout for all /dashboard routes and render the active page via children
 export default function Layout({
                                    children,
