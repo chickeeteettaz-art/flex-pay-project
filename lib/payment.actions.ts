@@ -1,7 +1,7 @@
 import {createClient} from "@/lib/client";
-const supabase = createClient();
 
 export const getPayment = async (paymentId:string) => {
+    const supabase = createClient();
 
     const {data, error} = await supabase
         .from('payment')
@@ -15,6 +15,7 @@ export const getPayment = async (paymentId:string) => {
 }
 
 export const getAllPayments = async () => {
+    const supabase = createClient();
     const {data, error} = await supabase
         .from('payment')
         .select('*')
