@@ -1,8 +1,11 @@
-# This config was automatically generated from your source code
+# This config was automatically generated from your code
 # Stacks detected: deps:node:.
 version: 2.1
+
 orbs:
   node: circleci/node@5
+  sonarcloud: sonarsource/sonarcloud@2.0.0
+
 jobs:
   build-node:
     # Build node project
@@ -23,6 +26,22 @@ jobs:
       - store_artifacts:
           path: ~/artifacts
           destination: node-build
+
+  sonarqube-analysis:
+    # Run SonarQube analysis for code smells and hotspots
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Substitute environment variables in sonar-project.properties
+          command: |
+            sed -i "s|\${SONAR_PROJECT_KEY}|${SONAR_PROJECT_KEY}|g" sonar-project.properties
+            sed -i "s|\${SONAR_ORG_KEY}|${SONAR_ORG_KEY}|g" sonar-project.properties
+      - sonarcloud/scan:
+          sonar_token_variable_name: SONAR_TOKEN
+
   deploy:
     # This is an example deploy job, not actually used by the workflow
     docker:
@@ -32,10 +51,15 @@ jobs:
       - run:
           name: deploy
           command: '#e.g. ./deploy.sh'
+
 workflows:
   build:
     jobs:
       - build-node
+      - sonarqube-analysis:
+          context: SonarCloud
+          requires:
+            - build-node
     # - deploy:
     #     requires:
     #       - build-node
