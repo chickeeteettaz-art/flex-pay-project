@@ -217,10 +217,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                 OR
                             </FieldSeparator>
 
-
-                            <FieldDescription className="text-center">
-                                Don&apos;t have an account? <a href="/signup">Sign up</a>
-                            </FieldDescription>
                             <FieldDescription className="text-center">
                                 Login As Admin<a href="/admin-login">Admin Login</a>
                             </FieldDescription>
