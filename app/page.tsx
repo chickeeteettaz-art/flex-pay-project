@@ -1,6 +1,6 @@
 import { LoginForm } from "@/components/login-form"
 
-// This is the login page for the application. It is a simple page that contains the login 
+// This is the login page for the application. It is a simple page that contains the login form.
 export default function LoginPage() {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
