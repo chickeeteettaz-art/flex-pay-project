@@ -44,18 +44,10 @@ export default function SignupPage() {
           <Link href="/" className="w-full">
             <Button className="w-full" size="lg">
               <Home className="mr-2 h-4 w-4" />
-              Go to Home
+              Go Back
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
+
         </div>
 
         {/* Additional Links */}
