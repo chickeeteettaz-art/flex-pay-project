@@ -1,6 +1,4 @@
-
-
-'use client'
+"use client"
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -10,7 +8,6 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-gradient-to-br from-background to-muted p-6 md:p-10">
       <div className="w-full max-w-md text-center space-y-8">
-        {/* 404 Number */}
         <div className="space-y-2">
           <div className="text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">
             404
@@ -20,7 +17,6 @@ export default function SignupPage() {
           </div>
         </div>
 
-        {/* Message */}
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight">
             Oops! Something went wrong
@@ -30,7 +26,6 @@ export default function SignupPage() {
           </p>
         </div>
 
-        {/* Decorative Element */}
         <div className="flex justify-center">
           <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
