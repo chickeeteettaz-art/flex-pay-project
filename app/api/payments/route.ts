@@ -74,7 +74,7 @@ export async function GET(request: Request) {
         const supabase = await  createClient()
         // Verify user
         const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) return NextResponse.json({ error: `Unauthorized ${user}` }, { status: 401 })
+        if (authError || !user) return NextResponse.json({ error: `Unauthorized user` }, { status: 401 })
 
         // Use a join to fetch payments belonging to the user's account
         const { data, error } = await supabase

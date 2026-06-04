@@ -24,8 +24,7 @@ import { ChartNoAxesCombined, Eye, EyeOff } from "lucide-react";
 const userSchema = z.object({
     email: z
         .string()
-        .min(1, { message: "Email is required" })
-        .email({ message: "Enter a valid email" }),
+        .min(1, { message: "Email is required" }),
 
     password: z
         .string()
